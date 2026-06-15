@@ -4,7 +4,10 @@
       <div class="logo">🍃 匿名忏悔室</div>
       <nav class="nav">
         <router-link to="/" class="nav-link" :class="{ active: $route.path === '/' }">
-          首页
+          随机秘密
+        </router-link>
+        <router-link to="/echo-wall" class="nav-link" :class="{ active: $route.path === '/echo-wall' }">
+          回声墙
         </router-link>
         <router-link to="/confess" class="nav-link" :class="{ active: $route.path === '/confess' }">
           倾诉秘密

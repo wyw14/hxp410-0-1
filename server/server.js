@@ -89,6 +89,43 @@ app.get('/api/secrets/random', (req, res) => {
   }
 });
 
+app.get('/api/secrets/list', (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 5;
+
+    const secrets = readSecrets();
+    const forgivenSecrets = secrets
+      .filter(s => s.status === '已宽恕')
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    const total = forgivenSecrets.length;
+    const totalPages = Math.ceil(total / pageSize);
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedSecrets = forgivenSecrets.slice(startIndex, endIndex);
+
+    res.json({
+      success: true,
+      data: paginatedSecrets.map(s => ({
+        id: s.id,
+        content: s.content,
+        status: s.status,
+        createdAt: s.createdAt
+      })),
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages
+      }
+    });
+  } catch (error) {
+    console.error('获取秘密列表时出错:', error);
+    res.status(500).json({ error: '服务器内部错误' });
+  }
+});
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
